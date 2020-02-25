@@ -53,7 +53,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::registerPlugin](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L85-L88)
+See the source code for method [LightPluginInstallerService::registerPlugin](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L86-L89)
 
 
 See Also

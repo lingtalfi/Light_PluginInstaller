@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07
+2020-02-07 -> 2020-02-25
 
 
 
@@ -84,6 +84,10 @@ $events.methods_collection:
 History Log
 =============
 
+- 1.1.0 -- 2020-02-25
+
+    - add LightPluginInstallerService->fetchRowColumn method
+    
 - 1.0.0 -- 2020-02-07
 
     - initial commit

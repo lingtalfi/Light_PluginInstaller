@@ -8,6 +8,7 @@ use Ling\Light\ServiceContainer\LightServiceContainerInterface;
 use Ling\Light_Database\Service\LightDatabaseService;
 use Ling\Light_PluginInstaller\Exception\LightPluginInstallerException;
 use Ling\Light_PluginInstaller\PluginInstaller\PluginInstallerInterface;
+use Ling\SimplePdoWrapper\SimplePdoWrapper;
 use Ling\SimplePdoWrapper\Util\MysqlInfoUtil;
 
 /**
@@ -264,6 +265,37 @@ class LightPluginInstallerService
         ]);
         if (false !== $res) {
             return ((int)$res['count'] > 0);
+        }
+        return false;
+    }
+
+
+    /**
+     * Returns the value of the given column in the given table, matching the given @page(where conditions),
+     * or false if no match was found.
+     *
+     *
+     * @param string $table
+     * @param string $column
+     * @param $where
+     * @return string|false
+     * @throws \Exception
+     */
+    public function fetchRowColumn(string $table, string $column, $where)
+    {
+        /**
+         * @var $db LightDatabaseService
+         */
+        $db = $this->container->get("database");
+        $markers = [];
+        $q = "select `$column` from `$table`";
+
+        SimplePdoWrapper::addWhereSubStmt($q, $markers, $where);
+
+
+        $res = $db->fetch($q, $markers, \PDO::FETCH_COLUMN);
+        if (false !== $res) {
+            return $res;
         }
         return false;
     }
