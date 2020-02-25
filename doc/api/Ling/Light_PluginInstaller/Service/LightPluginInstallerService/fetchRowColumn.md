@@ -7,7 +7,7 @@ LightPluginInstallerService::fetchRowColumn
 
 
 
-LightPluginInstallerService::fetchRowColumn — or false if no match was found.
+LightPluginInstallerService::fetchRowColumn — Returns the value of the given column in the given table, matching the given [where conditions](https://github.com/lingtalfi/SimplePdoWrapper#the-where-conditions).
 
 
 
@@ -16,13 +16,14 @@ Description
 ================
 
 
-public [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService/fetchRowColumn.md)(string $table, string $column, $where) : string | false
+public [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService/fetchRowColumn.md)(string $table, string $column, $where, ?bool $throwEx = false) : string | false
 
 
 
 
-Returns the value of the given column in the given table, matching the given [where conditions](https://github.com/lingtalfi/SimplePdoWrapper#the-where-conditions),
-or false if no match was found.
+Returns the value of the given column in the given table, matching the given [where conditions](https://github.com/lingtalfi/SimplePdoWrapper#the-where-conditions).
+In case of no match, the method either returns false by default, or throws an exception if the throwEx flag is
+set to true.
 
 
 
@@ -40,6 +41,10 @@ Parameters
     
 
 - where
+
+    
+
+- throwEx
 
     
 
@@ -63,7 +68,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L284-L301)
+See the source code for method [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L288-L308)
 
 
 See Also

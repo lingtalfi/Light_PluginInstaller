@@ -271,17 +271,21 @@ class LightPluginInstallerService
 
 
     /**
-     * Returns the value of the given column in the given table, matching the given @page(where conditions),
-     * or false if no match was found.
+     * Returns the value of the given column in the given table, matching the given @page(where conditions).
+     * In case of no match, the method either returns false by default, or throws an exception if the throwEx flag is
+     * set to true.
+     *
+     *
      *
      *
      * @param string $table
      * @param string $column
      * @param $where
+     * @param bool $throwEx = false
      * @return string|false
      * @throws \Exception
      */
-    public function fetchRowColumn(string $table, string $column, $where)
+    public function fetchRowColumn(string $table, string $column, $where, bool $throwEx = false)
     {
         /**
          * @var $db LightDatabaseService
@@ -296,6 +300,9 @@ class LightPluginInstallerService
         $res = $db->fetch($q, $markers, \PDO::FETCH_COLUMN);
         if (false !== $res) {
             return $res;
+        }
+        if (true === $throwEx) {
+            throw new LightPluginInstallerException("Row column not found: $table.$column.");
         }
         return false;
     }

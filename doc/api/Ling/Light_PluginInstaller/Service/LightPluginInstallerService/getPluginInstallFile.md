@@ -49,7 +49,7 @@ Returns string.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getPluginInstallFile](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L313-L316)
+See the source code for method [LightPluginInstallerService::getPluginInstallFile](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L320-L323)
 
 
 See Also

@@ -84,6 +84,10 @@ $events.methods_collection:
 History Log
 =============
 
+- 1.2.0 -- 2020-02-25
+
+    - update LightPluginInstallerService->fetchRowColumn, add throwEx argument
+    
 - 1.1.0 -- 2020-02-25
 
     - add LightPluginInstallerService->fetchRowColumn method
