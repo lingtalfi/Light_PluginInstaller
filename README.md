@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2020-02-25
+2020-02-07 -> 2020-03-03
 
 
 
@@ -83,6 +83,10 @@ $events.methods_collection:
 
 History Log
 =============
+
+- 1.3.0 -- 2020-03-03
+
+    - update LightPluginInstallerService, add $uninstallStrictMode property
 
 - 1.2.0 -- 2020-02-25
 

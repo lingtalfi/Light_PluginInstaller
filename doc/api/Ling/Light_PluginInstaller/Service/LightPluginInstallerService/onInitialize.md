@@ -48,7 +48,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::onInitialize](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L215-L218)
+See the source code for method [LightPluginInstallerService::onInitialize](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L240-L243)
 
 
 See Also

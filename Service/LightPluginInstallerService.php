@@ -39,6 +39,12 @@ class LightPluginInstallerService
     protected $container;
 
     /**
+     * Whether the uninstall method throws exceptions (true) or silently ignore them (false=default).
+     * @var bool = false
+     */
+    protected $uninstallStrictMode;
+
+    /**
      * This property holds a cache for the  mysqlInfoUtil used by this instance.
      * @var MysqlInfoUtil
      */
@@ -54,6 +60,7 @@ class LightPluginInstallerService
         $this->rootDir = "/tmp";
         $this->container = null;
         $this->mysqlInfoUtil = null;
+        $this->uninstallStrictMode = false;
     }
 
     /**
@@ -74,6 +81,16 @@ class LightPluginInstallerService
     public function setContainer(LightServiceContainerInterface $container)
     {
         $this->container = $container;
+    }
+
+    /**
+     * Sets the uninstallStrictMode.
+     *
+     * @param bool $uninstallStrictMode
+     */
+    public function setUninstallStrictMode(bool $uninstallStrictMode)
+    {
+        $this->uninstallStrictMode = $uninstallStrictMode;
     }
 
 
@@ -144,19 +161,27 @@ class LightPluginInstallerService
             throw new LightPluginInstallerException("The plugin \"$name\" is not registered.");
         }
 
-        // we want to uninstall all the dependent plugins first.
-        foreach ($this->plugins as $dependentPluginName => $installer) {
-            $dependencies = $installer->getDependencies();
-            if (in_array($name, $dependencies, true)) {
-                $this->uninstall($dependentPluginName);
+
+        try {
+
+            // we want to uninstall all the dependent plugins first.
+            foreach ($this->plugins as $dependentPluginName => $installer) {
+                $dependencies = $installer->getDependencies();
+                if (in_array($name, $dependencies, true)) {
+                    $this->uninstall($dependentPluginName);
+                }
+            }
+
+
+            // now uninstall the plugin
+            $pluginInstaller = $this->plugins[$name];
+            $pluginInstaller->uninstall();
+
+        } catch (\Exception $e) {
+            if (true === $this->uninstallStrictMode) {
+                throw $e;
             }
         }
-
-
-        // now uninstall the plugin
-        $pluginInstaller = $this->plugins[$name];
-        $pluginInstaller->uninstall();
-
 
         // keep track of the installation state
         $file = $this->getPluginInstallFile($name);
