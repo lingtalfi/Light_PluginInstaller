@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2020-06-23
+2020-02-07 -> 2020-07-21
 
 
 
@@ -100,6 +100,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 1.4.1 -- 2020-07-21
+
+    - update conception notes  
+    
 - 1.4.0 -- 2020-06-23
 
     - update install concept, now has two phases  
