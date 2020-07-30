@@ -100,6 +100,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 1.6.0 -- 2020-07-30
+
+    - add LightPluginInstallerService->removeCacheEntry method  
+    
 - 1.5.0 -- 2020-07-30
 
     - add LightPluginInstallerService->pluginHasCacheEntry method  

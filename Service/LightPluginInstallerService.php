@@ -244,6 +244,19 @@ class LightPluginInstallerService
         return file_exists($f);
     }
 
+
+    /**
+     * Removes the cache entry, if any, for the given plugin.
+     *
+     *
+     * @param string $pluginName
+     */
+    public function removeCacheEntry(string $pluginName)
+    {
+        $f = $this->getPluginInstallFile($pluginName);
+        unlink($f);
+    }
+
     /**
      * Returns whether the service is currently in the middle of core installing plugins.
      * See the @page(Light_PluginInstaller conception notes) for more details.
