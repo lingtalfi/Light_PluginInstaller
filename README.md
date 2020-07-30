@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2020-07-21
+2020-02-07 -> 2020-07-30
 
 
 
@@ -100,6 +100,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 1.5.0 -- 2020-07-30
+
+    - add LightPluginInstallerService->pluginHasCacheEntry method  
+    
 - 1.4.1 -- 2020-07-21
 
     - update conception notes  

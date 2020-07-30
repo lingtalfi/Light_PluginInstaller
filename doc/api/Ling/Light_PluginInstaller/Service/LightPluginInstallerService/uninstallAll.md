@@ -51,7 +51,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::uninstallAll](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L468-L484)
+See the source code for method [LightPluginInstallerService::uninstallAll](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L498-L514)
 
 
 See Also

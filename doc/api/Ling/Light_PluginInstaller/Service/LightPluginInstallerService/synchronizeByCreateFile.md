@@ -76,7 +76,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::synchronizeByCreateFile](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L634-L655)
+See the source code for method [LightPluginInstallerService::synchronizeByCreateFile](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L664-L685)
 
 
 See Also

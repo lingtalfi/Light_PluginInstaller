@@ -64,7 +64,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::install](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L243-L305)
+See the source code for method [LightPluginInstallerService::install](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L273-L335)
 
 
 See Also
