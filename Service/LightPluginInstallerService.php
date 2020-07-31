@@ -44,8 +44,8 @@ class LightPluginInstallerService
     protected $container;
 
     /**
-     * Whether the uninstall method throws exceptions (true) or silently ignore them (false=default).
-     * @var bool = false
+     * Whether the uninstall method throws exceptions (true) or silently ignore them (false).
+     * @var bool = true
      */
     protected $uninstallStrictMode;
 
@@ -114,7 +114,7 @@ class LightPluginInstallerService
         $this->rootDir = "/tmp";
         $this->container = null;
         $this->mysqlInfoUtil = null;
-        $this->uninstallStrictMode = false;
+        $this->uninstallStrictMode = true;
         $this->pluginExtensions = [];
         $this->options = [];
         $this->postInstallers = [];

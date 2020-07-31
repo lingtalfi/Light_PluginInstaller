@@ -4,7 +4,7 @@
 
 The LightPluginInstallerService class
 ================
-2020-02-07 --> 2020-07-30
+2020-02-07 --> 2020-07-31
 
 
 
@@ -95,7 +95,7 @@ Properties
 
 - <span id="property-uninstallStrictMode"><b>uninstallStrictMode</b></span>
 
-    Whether the uninstall method throws exceptions (true) or silently ignore them (false=default).
+    Whether the uninstall method throws exceptions (true) or silently ignore them (false).
     
     
 

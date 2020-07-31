@@ -4,7 +4,7 @@
 
 The LightPluginInstallerException class
 ================
-2020-02-07 --> 2020-07-30
+2020-02-07 --> 2020-07-31
 
 
 

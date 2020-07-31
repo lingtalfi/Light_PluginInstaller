@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2020-07-30
+2020-02-07 -> 2020-07-31
 
 
 
@@ -100,6 +100,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 1.7.0 -- 2020-07-31
+
+    - update LightPluginInstallerService.uninstallStrictMode property now defaults to true  
+    
 - 1.6.0 -- 2020-07-30
 
     - add LightPluginInstallerService->removeCacheEntry method  
