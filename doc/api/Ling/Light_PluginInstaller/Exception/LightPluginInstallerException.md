@@ -4,7 +4,7 @@
 
 The LightPluginInstallerException class
 ================
-2020-02-07 --> 2020-12-08
+2020-02-07 --> 2021-01-25
 
 
 
@@ -54,4 +54,4 @@ See the source code of [Ling\Light_PluginInstaller\Exception\LightPluginInstalle
 
 SeeAlso
 ==============
-Next class: [PluginInstallerExtensionInterface](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Extension/PluginInstallerExtensionInterface.md)<br>
+Next class: [LightBasePluginInstaller](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller.md)<br>

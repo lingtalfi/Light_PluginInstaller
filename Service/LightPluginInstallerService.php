@@ -4,17 +4,20 @@
 namespace Ling\Light_PluginInstaller\Service;
 
 use Ling\ArrayToString\ArrayToStringTool;
-use Ling\Bat\FileSystemTool;
+use Ling\Bat\ClassTool;
+use Ling\CliTools\Formatter\BashtmlFormatter;
+use Ling\CyclicChainDetector\CyclicChainDetectorUtil;
+use Ling\CyclicChainDetector\Helper\CyclicChainDetectorHelper;
+use Ling\CyclicChainDetector\Link;
+use Ling\Light\ServiceContainer\LightServiceContainerAwareInterface;
 use Ling\Light\ServiceContainer\LightServiceContainerInterface;
 use Ling\Light_Database\Service\LightDatabaseService;
 use Ling\Light_DbSynchronizer\Service\LightDbSynchronizerService;
-use Ling\Light_Logger\LightLoggerService;
 use Ling\Light_PluginInstaller\Exception\LightPluginInstallerException;
-use Ling\Light_PluginInstaller\Extension\PluginInstallerExtensionInterface;
 use Ling\Light_PluginInstaller\PluginInstaller\PluginInstallerInterface;
-use Ling\Light_PluginInstaller\PluginInstaller\PluginPostInstallerInterface;
 use Ling\SimplePdoWrapper\SimplePdoWrapper;
 use Ling\SimplePdoWrapper\Util\MysqlInfoUtil;
+use Ling\UniverseTools\PlanetTool;
 
 /**
  * The LightPluginInstallerService class.
@@ -22,20 +25,6 @@ use Ling\SimplePdoWrapper\Util\MysqlInfoUtil;
 class LightPluginInstallerService
 {
 
-    /**
-     * This property holds the plugins for this instance.
-     * It's an array of pluginName => PluginInstallerInterface
-     * @var PluginInstallerInterface[]
-     */
-    protected $plugins;
-
-    /**
-     * This property holds the rootDir for this instance.
-     * The rootDir contains all the files to keep track of whether plugins are installed or not.
-     *
-     * @var string
-     */
-    protected $rootDir;
 
     /**
      * This property holds the container for this instance.
@@ -43,25 +32,47 @@ class LightPluginInstallerService
      */
     protected $container;
 
-    /**
-     * Whether the uninstall method throws exceptions (true) or silently ignore them (false).
-     * @var bool = true
-     */
-    protected $uninstallStrictMode;
-
 
     /**
-     * An array of plugin extensions.
+     * The mode for the output.
+     * Can be one of:
      *
-     * @var PluginInstallerExtensionInterface[]
+     * - browser
+     *
+     *
+     * Note: we use the bashtml language for convenience, since it can print messages in both the cli and browser environment.
+     *
+     * @var string
      */
-    protected $pluginExtensions;
+    protected $outputMode;
 
     /**
-     * This property holds the postInstallers for this instance.
-     * @var PluginPostInstallerInterface[]
+     * The array of output levels to display.
+     * The available output levels are:
+     *
+     * - debug
+     * - info
+     * - warning
+     *
+     *
+     * By default, this is the following array:
+     *
+     * - info
+     * - warning
+     *
+     *
+     *
+     *
+     * @var array
      */
-    protected $postInstallers;
+    protected $outputLevels;
+
+    /**
+     * This property holds the outputFormatter for this instance.
+     * @var BashtmlFormatter
+     */
+    protected $outputFormatter;
+
 
     /**
      * This property holds the options for this instance.
@@ -93,16 +104,41 @@ class LightPluginInstallerService
     private $mysqlInfoUtil;
 
     /**
-     * This property holds the _isInstalling for this instance.
-     * @var bool
-     */
-    private $_isInstalling;
-
-    /**
      * This internal property holds the number of indent chars to prefix a log message with.
      * @var int = 0
      */
     private $_indent;
+
+    /**
+     * This property holds the cyclicUtil for this instance.
+     * @var CyclicChainDetectorUtil
+     */
+    private $cyclicUtil;
+
+    /**
+     * A logic dependency cache.
+     * It's an array of planetDotName => logic dependencies.
+     * With logic dependencies being an array of planetDotNames.
+     *
+     * Note: this cache is used differently, depending on the calling method.
+     *
+     *
+     * @var array|null
+     */
+    private $dependencies;
+
+    /**
+     * Cache for installer instances.
+     * It's an array of planetDotName => PluginInstallerInterface.
+     * @var array
+     */
+    private $installers;
+
+    /**
+     * Cache of all the planetDotNames in the current application.
+     * @var array|null
+     */
+    private $allPlanetDotNames;
 
 
     /**
@@ -110,16 +146,20 @@ class LightPluginInstallerService
      */
     public function __construct()
     {
-        $this->plugins = [];
-        $this->rootDir = "/tmp";
         $this->container = null;
         $this->mysqlInfoUtil = null;
-        $this->uninstallStrictMode = true;
-        $this->pluginExtensions = [];
-        $this->options = [];
-        $this->postInstallers = [];
-        $this->_isInstalling = false;
+        $this->cyclicUtil = null;
+        $this->options = [
+            'info',
+            'warning',
+        ];
         $this->_indent = 0;
+        $this->outputMode = 'browser';
+        $this->outputFormatter = null;
+        $this->outputLevels = [];
+        $this->dependencies = null;
+        $this->installers = [];
+        $this->allPlanetDotNames = null;
     }
 
     /**
@@ -134,30 +174,6 @@ class LightPluginInstallerService
 
 
     /**
-     * Returns the value of the option which name was given, or the given defaultValue otherwise (if the option was not found).
-     *
-     *
-     * @param string $key
-     * @param null $defaultValue
-     * @return mixed
-     */
-    public function getOption(string $key, $defaultValue = null)
-    {
-        return $this->options[$key] ?? $defaultValue;
-    }
-
-
-    /**
-     * Sets the rootDir.
-     *
-     * @param string $rootDir
-     */
-    public function setRootDir(string $rootDir)
-    {
-        $this->rootDir = $rootDir;
-    }
-
-    /**
      * Sets the container.
      *
      * @param LightServiceContainerInterface $container
@@ -168,416 +184,179 @@ class LightPluginInstallerService
     }
 
     /**
-     * Sets the uninstallStrictMode.
+     * Sets the outputLevels.
      *
-     * @param bool $uninstallStrictMode
+     * @param array $outputLevels
      */
-    public function setUninstallStrictMode(bool $uninstallStrictMode)
+    public function setOutputLevels(array $outputLevels)
     {
-        $this->uninstallStrictMode = $uninstallStrictMode;
+        $this->outputLevels = $outputLevels;
     }
 
 
     /**
-     * Registers the given plugin.
+     * Installs the planet which [dot name](https://github.com/karayabin/universe-snapshot#the-planet-dot-name) is given.
      *
-     * @param string $name
-     * @param PluginInstallerInterface $pluginInstaller
-     */
-    public function registerPlugin(string $name, PluginInstallerInterface $pluginInstaller)
-    {
-        $this->plugins[$name] = $pluginInstaller;
-        $this->dispatch("registerPluginAfter", $pluginInstaller);
-    }
-
-
-    /**
-     * Registers a post installer.
-     *
-     * See the @page(Light_PluginInstaller conception notes) for more details.
-     *
-     * @param int $level
-     * @param callable $postInstaller
-     * @return void
-     */
-    public function registerPostInstaller(int $level, callable $postInstaller)
-    {
-        if (false === array_key_exists($level, $this->postInstallers)) {
-            $this->postInstallers[$level] = [];
-        }
-        $this->postInstallers[$level][] = $postInstaller;
-    }
-
-
-    /**
-     * Returns the array of registered plugin names.
-     * @return array
-     */
-    public function getRegisteredPluginNames(): array
-    {
-        return array_keys($this->plugins);
-    }
-
-
-    /**
-     * Returns whether the given plugin is registered.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function isRegistered(string $name): bool
-    {
-        return array_key_exists($name, $this->plugins);
-    }
-
-    /**
-     * Registers a plugin extension.
-     * @param PluginInstallerExtensionInterface $extension
-     */
-    public function registerPluginExtension(PluginInstallerExtensionInterface $extension)
-    {
-        $this->pluginExtensions[] = $extension;
-    }
-
-
-    /**
-     * Returns whether the given plugin has a cache entry.
-     *
-     * Note: if so, this means that our service considers that this plugin is installed.
+     * Available options:
+     * - force: bool=false, whether to call the install method of the plugin's installer, even if the plugin is already "logic installed"
      *
      *
-     *
-     * @param string $pluginName
-     * @return bool
-     */
-    public function pluginHasCacheEntry(string $pluginName): bool
-    {
-        $f = $this->getPluginInstallFile($pluginName);
-        return file_exists($f);
-    }
-
-
-    /**
-     * Removes the cache entry, if any, for the given plugin.
-     *
-     *
-     * @param string $pluginName
-     */
-    public function removeCacheEntry(string $pluginName)
-    {
-        $f = $this->getPluginInstallFile($pluginName);
-        unlink($f);
-    }
-
-    /**
-     * Returns whether the service is currently in the middle of core installing plugins.
-     * See the @page(Light_PluginInstaller conception notes) for more details.
-     *
-     * @return bool
-     */
-    public function pluginsAreBeingInstalled(): bool
-    {
-        return $this->_isInstalling;
-    }
-
-    /**
-     * Installs a registered plugin by its name.
-     *
-     * Available options are:
-     * - dependencyName: string, in the debug log, will indicate the relationship between the parent/child plugins.
-     *          You probably never need this, it's used for internal purposes.
-     * - indent: int=0. An internal option that I use to enhance the display of the debug (i.e. you probably should't mess with this).
-     *          It's the number of indent chars to prefix the log message with.
-     *
-     *
-     *
-     * @param string $name
+     * @param string $planetDotName
      * @param array $options
-     * @throws \Exception
      */
-    public function install(string $name, array $options = [])
+    public function install(string $planetDotName, array $options = [])
     {
-        $this->_isInstalling = true;
-        $depName = $options['dependencyName'] ?? null;
-        $plugName = $name;
-        $plugType = 'plugin';
-        if (null !== $depName) {
-            $plugName .= ' (dependency of ' . $depName . ')';
-            $plugType = 'dependency';
-        }
-        $this->debugLog('plugin_installer: Installing ' . $plugType . ' ' . $plugName . "...");
-
-        if (false === array_key_exists($name, $this->plugins)) {
-            $this->debugLog('plugin_installer: Fatal error: the plugin ' . $name . " is not registered.");
-            throw new LightPluginInstallerException("The plugin \"$name\" is not registered.");
-        }
+        $this->dependencies = [];
 
 
-        $pluginInstaller = $this->plugins[$name];
+        $force = $options['force'] ?? false;
 
-        // we install the dependencies first
-        $dependencies = $pluginInstaller->getDependencies();
+        $this->message("Calling \"install\" method with $planetDotName." . PHP_EOL);
 
-        $this->_indent++;
+        $this->cyclicUtil = new CyclicChainDetectorUtil();
+        $this->cyclicUtil->setCallback(function (Link $link) {
+            $name = $link->name;
+            $s = CyclicChainDetectorHelper::getPathAsString($link);
+            $this->error("cyclic relationship detected with culprit $name, in chain $s.");
+        });
+        $this->cyclicUtil->reset();
+        $this->message("Creating install map for $planetDotName...", "debug");
+        $installMap = $this->getInstallMap($planetDotName);
+        $nbPlanets = count($installMap);
+        $this->message("...$nbPlanets planet(s) to <b>logic install</b>." . PHP_EOL, "debug");
 
-        if ($dependencies) {
-            $nbDep = count($dependencies);
-            $sDep = ($nbDep === 1) ? 'dependency' : 'dependencies';
-            $this->debugLog("plugin_installer: " . $nbDep . " $sDep found.");
-            $this->_indent--;
-            foreach ($dependencies as $plugin) {
-                $this->_indent++;
-                if (false === $this->isInstalled($plugin)) {
-                    $this->install($plugin, [
-                        "dependencyName" => $name,
-                    ]);
+        $current = 1;
+        foreach ($installMap as $_planetDotName) {
+            $this->message("$planetDotName ($current/$nbPlanets): -> logic installing $_planetDotName." . PHP_EOL, "debug");
+            if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+                if (true === $force || false === $installer->isInstalled()) {
+                    $installer->install();
+                    $this->message("$_planetDotName: was logic installed.", "debug");
                 } else {
-                    $this->debugLog('plugin_installer: dependency ' . $plugin . " is already installed.");
+                    $this->message("$_planetDotName: was already logic installed, skipping.", "debug");
                 }
-                $this->_indent--;
+            } else {
+                $this->message("$_planetDotName: no installer, skip.", "debug");
             }
-        } else {
-            $this->debugLog("plugin_installer: No dependency found for $name.");
-            $this->_indent--;
         }
-
-
-        try {
-            $this->_indent++;
-
-            $pluginInstaller->install();
-            // keep track of the installation state
-            $file = $this->getPluginInstallFile($name);
-            FileSystemTool::mkfile($file);
-            $this->_indent--;
-
-            $this->debugLog('plugin_installer: ' . $name . " installed.");
-
-        } catch (\Exception $e) {
-            $this->debugLog('plugin_installer: An error occurred while installing plugin ' . $name . ": " . PHP_EOL . $e);
-        }
-        $this->_isInstalling = false;
     }
 
+
     /**
-     * Uninstalls a registered plugin by its name.
-     *
-     * Available options are:
-     * - parentName: string, in the debug log, will help to indicate the relationship between the parent/child plugins.
-     *          You probably never need this, it's used for internal purposes.
-     * - indent: int=0. An internal option that I use to enhance the display of the debug (i.e. you probably should't mess with this).
-     *          It's the number of indent chars to prefix the log message with.
+     * Uninstalls the plugin which planetDotName is given.
      *
      *
-     * @param array $options
-     * @param string $name
+     * @param string $planetDotName
      * @throws \Exception
      */
-    public function uninstall(string $name, array $options = [])
+    public function uninstall(string $planetDotName)
     {
-        $depName = $options['parentName'] ?? null;
-        $plugName = $name;
-        if (null !== $depName) {
-            $plugName .= ' (child of ' . $depName . ')';
-        }
-        $this->debugLog('plugin_installer: Uninstalling ' . $plugName . "...");
+        $this->message("Calling \"uninstall\" method with $planetDotName." . PHP_EOL);
 
 
-        if (false === array_key_exists($name, $this->plugins)) {
-            $this->debugLog('plugin_installer: Fatal error: the plugin ' . $name . " is not registered.");
-            throw new LightPluginInstallerException("The plugin \"$name\" is not registered.");
-        }
+        // init dependencies for every planet in the target application
+        $this->initAllDependencies();
 
 
-        try {
+        $this->message("Creating uninstall map for $planetDotName...", "debug");
+        $uninstallMap = $this->getUninstallMap($planetDotName);
+        $nbPlanets = count($uninstallMap);
+        $this->message("...$nbPlanets planet(s) to <b>logic uninstall</b>." . PHP_EOL, "debug");
 
 
-            // we want to uninstall all the dependent plugins first.
-            $children = [];
-            foreach ($this->plugins as $dependentPluginName => $installer) {
-                $dependencies = $installer->getDependencies();
-                if (in_array($name, $dependencies, true)) {
-                    $children[] = $dependentPluginName;
-                }
-            }
+        $current = 1;
+        foreach ($uninstallMap as $_planetDotName) {
+            $this->message("$planetDotName ($current/$nbPlanets): -> logic uninstalling $_planetDotName." . PHP_EOL, "debug");
+            if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+                $installer->uninstall();
+                $this->message("$_planetDotName: was logic uninstalled.", "debug");
 
-
-            $this->_indent++;
-            $count = count($children);
-            $this->debugLog('plugin_installer: ' . $count . ' children found.');
-            $this->_indent--;
-            if ($children) {
-                $n = 1;
-                foreach ($children as $child) {
-                    $this->_indent++;
-                    if (true === $this->isInstalled($child)) {
-                        $this->uninstall($child, ['parentName' => $name]);
-                        $n++;
-                    } else {
-                        $this->debugLog('plugin_installer: child ' . $child . " is already uninstalled.");
-                    }
-                    $this->_indent--;
-                }
-            }
-
-
-            // now uninstall the plugin
-            $pluginInstaller = $this->plugins[$name];
-            $this->_indent++;
-            $pluginInstaller->uninstall();
-            $this->_indent--;
-
-
-        } catch (\Exception $e) {
-            if (true === $this->uninstallStrictMode) {
-                throw $e;
+            } else {
+                $this->message("$_planetDotName: no installer, skip.", "debug");
             }
         }
-
-        // keep track of the installation state
-        $file = $this->getPluginInstallFile($name);
-        FileSystemTool::remove($file);
-
-
-        $this->_indent--;
-        $this->debugLog('plugin_installer: ' . $name . ' is uninstalled.');
     }
 
 
     /**
      * Returns whether the given plugin is installed.
      *
-     * @param string $name
+     * @param string $planetDotName
      * @return bool
      */
-    public function isInstalled(string $name): bool
+    public function isInstalled(string $planetDotName): bool
     {
-        $useCache = $this->options['useCache'] ?? true;
-        if (true === $useCache) {
-            $file = $this->getPluginInstallFile($name);
-            return file_exists($file);
-        } else {
-            try {
-
-                if (array_key_exists($name, $this->plugins)) {
-                    return $this->plugins[$name]->isInstalled();
-                } else {
-                    $this->error("isInstalled cannot resolve for  plugin \"$name\" because it's not registered.");
-                }
-            } catch (\Exception $e) {
-                $this->debugLog("plugin_installer: An exception occurred when calling the isInstalled method on plugin \"$name\": " . $e);
-            }
+        if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+            return $installer->isInstalled();
         }
-        return false;
+        return true;
     }
 
 
-    //--------------------------------------------
-    //
-    //--------------------------------------------
     /**
-     * This method will install all registered plugins.
+     * This method will logic install all plugins found in the current application.
+     *
+     * Available options are:
+     * - force: bool=false, whether to call the install method of the plugin's installer, even if the plugin is already "logic installed"
+     *
+     *
+     * @param array $options
      * @throws \Exception
      */
-    public function installAll()
+    public function installAll(array $options = [])
     {
-        $this->_indent = 0; // initialize indent
-        $this->_isInstalling = true;
-        $useCache = $this->options['useCache'] ?? true;
-        $sCache = (true === $useCache) ? 'on' : 'off';
-
-        //  auto-install all plugins
-        $this->debugLog('--clean--'); // re-initialize the file to make each session more readable...
-        $this->debugLog('plugin_installer: "Install check" procedure, ' . count($this->plugins) . " plugins to check (cache is $sCache).");
-
-
-        foreach ($this->plugins as $name => $installer) {
-            if (false === $this->isInstalled($name)) {
-                $this->install($name);
-            } else {
-                $this->debugLog('plugin_installer: Plugin ' . $name . " is already installed.");
-
-
-                // if cache if off...
-                // some plugins always return isInstalled=true for some reasons
-                // we need to create the cache file for them too...
-                $useCache = $this->options['useCache'] ?? true;
-                if (false === $useCache) {
-                    $file = $this->getPluginInstallFile($name);
-                    if (false === file_exists($file)) {
-                        FileSystemTool::mkfile($file);
-                    }
+        $force = $options['force'] ?? false;
+        $this->message("Calling \"installAll\" method." . PHP_EOL);
+        $dotNames = $this->getAllPlanetDotNames();
+        foreach ($dotNames as $dotName) {
+            if (null !== ($installer = $this->getInstallerInstance($dotName))) {
+                if (true === $force || false === $installer->isInstalled()) {
+                    $this->install($dotName, [
+                        'force' => $force,
+                    ]);
                 }
-
-
             }
         }
-        $this->_isInstalling = false;
     }
 
 
     /**
-     * This method uninstalls all registered plugins.
+     * This method will logic uninstall all plugins found in the current application.
      * @throws \Exception
      */
     public function uninstallAll()
     {
-        $this->_indent = 0; // initialize indent
-        $this->_isInstalling = true;
-
-        //  auto-install all plugins
-        $this->debugLog('--clean--'); // re-initialize the file to make each session more readable...
-        $this->debugLog('plugin_installer: "Uninstall all procedure, ' . count($this->plugins) . " plugins to call.");
-
-        foreach ($this->plugins as $name => $installer) {
-            if (true === $this->isInstalled($name)) {
-                $this->uninstall($name);
-            } else {
-                $this->debugLog('plugin_installer: Plugin ' . $name . " is already uninstalled.");
+        $this->message("Calling \"uninstallAll\" method." . PHP_EOL);
+        $dotNames = $this->getAllPlanetDotNames();
+        foreach ($dotNames as $dotName) {
+            if (null !== ($installer = $this->getInstallerInstance($dotName))) {
+                $this->uninstall($dotName);
             }
         }
     }
 
-
     /**
-     * Method called in response to @page(the Light.initialize_1 event).
-     * It will:
-     * - install all registered plugins
-     */
-    public function onInitialize()
-    {
-        $this->installAll();
-    }
-
-
-    //--------------------------------------------
-    //
-    //--------------------------------------------
-    /**
-     * Sends a message to our "official" debug log.
-     * See the @page(Light_PluginInstaller conception notes) for more details.
+     * Writes a message to the appropriate output.
+     * Depending of the message type, the message could be logged as well.
      *
+     * @param string $planetDotName
      * @param string $msg
+     * @param string|null $type
      */
-    public function debugLog(string $msg)
+    public function messageFromPlugin(string $planetDotName, string $msg, string $type = null)
     {
-        $useDebug = $this->options['useDebug'] ?? false;
-        if (true === $useDebug) {
-            /**
-             * @var $logger LightLoggerService
-             */
-            $logger = $this->container->get("logger");
-            $prefix = '';
-            if ($this->_indent > 0) {
-                $prefix = str_repeat('---- ', $this->_indent) . " ";
-            }
-            $logger->log($prefix . $msg, "plugin_installer.debug");
-        }
+        $msg = '---- ' . $planetDotName . ": " . $msg;
+        $this->message($msg, $type);
     }
 
 
+
+
+
+
+
     //--------------------------------------------
-    // HELPERS
+    // HELPERS FOR THIRD PARTY PLUGINS
     //--------------------------------------------
     /**
      * Returns whether the given table exists in the current database.
@@ -594,7 +373,7 @@ class LightPluginInstallerService
              * @var $db LightDatabaseService
              */
             $db = $this->container->get("database");
-            $util = new MysqlInfoUtil($db);
+            $util = $db->getMysqlInfoUtil();
             $this->mysqlInfoUtil = $util;
         }
         return $this->mysqlInfoUtil->hasTable($table);
@@ -678,15 +457,15 @@ class LightPluginInstallerService
      * Available options are:
      *
      * - errorLevel: debug|error = debug
+     * - planetDotName: string, the planet dot name to use in case of an error message
      *
      *
-     * @param string $pluginName
      * @param string $createFile
      * @param array $syncOptions
      * @param array $options
      * @throws \Exception
      */
-    public function synchronizeByCreateFile(string $pluginName, string $createFile, array $syncOptions = [], array $options = [])
+    public function synchronizeByCreateFile(string $createFile, array $syncOptions = [], array $options = [])
     {
 
         /**
@@ -696,6 +475,7 @@ class LightPluginInstallerService
         $isSuccess = $synchronizer->synchronize($createFile, $syncOptions);
         if (false === $isSuccess) {
             $errorLevel = $options['errorLevel'] ?? 'debug';
+            $planetDotName = $options['planetDotName'] ?? $createFile;
 
             if ("error" === $errorLevel) {
                 $errors = $synchronizer->getLogErrorMessages();
@@ -704,37 +484,239 @@ class LightPluginInstallerService
             }
 
 
-            $sErrors = $pluginName . ": The following errors occurred while trying to synchronize the database with our create file:" . PHP_EOL . ArrayToStringTool::toPhpArray($errors);
+            $sErrors = $planetDotName . ": The following errors occurred while trying to synchronize the database with our create file:" . PHP_EOL . ArrayToStringTool::toPhpArray($errors);
             throw new LightPluginInstallerException($sErrors);
         }
     }
+
+
+
+
+
+
+
+
+
 
     //--------------------------------------------
     //
     //--------------------------------------------
     /**
-     * Returns the path to the plugin install file.
+     * Returns the uninstall map array for the given @page(planet dot name).
      *
-     * @param string $name
-     * @return string
+     * It's an array of planet dot names, in the order they should be uninstalled.
+     *
+     *
+     * @param string $planetDotName
+     * @return array
      */
-    private function getPluginInstallFile(string $name): string
+    private function getUninstallMap(string $planetDotName): array
     {
-        return $this->rootDir . "/$name.txt";
+        $map = [];
+        $this->collectChildrenDependencies($planetDotName, $map);
+        $map[] = $planetDotName;
+
+        $map = array_unique($map);
+        return $map;
     }
 
 
     /**
-     * Dispatches the given event to the registered plugin extensions.
+     * Collects the children dependencies, recursively.
+     * This method assumes that the dependencies cache is fully built (i.e. every planet in the application has
+     * a corresponding entry in the cache).
      *
-     * @param string $eventName
-     * @param $parameter
+     * @param string $planetDotName
+     * @param array $uninstallMap
      */
-    private function dispatch(string $eventName, $parameter)
+    private function collectChildrenDependencies(string $planetDotName, array &$uninstallMap)
     {
-        foreach ($this->pluginExtensions as $pluginExtension) {
-            $pluginExtension->trigger($eventName, $parameter);
+        foreach ($this->dependencies as $depPlanetDotName => $dependencies) {
+            if (true === in_array($planetDotName, $dependencies, true)) {
+                $this->collectChildrenDependencies($depPlanetDotName, $uninstallMap);
+                $uninstallMap[] = $depPlanetDotName;
+            }
         }
+    }
+
+    /**
+     * Returns the install map array for the given @page(planet dot name).
+     *
+     * It's an array of planet dot names, in the order they should be installed.
+     *
+     *
+     * @param string $planetDotName
+     * @return array
+     */
+    private function getInstallMap(string $planetDotName): array
+    {
+        $installMap = [];
+        $this->collectInstallMap($planetDotName, $installMap);
+        $installMap = array_unique($installMap); // remove duplicates
+        return $installMap;
+    }
+
+
+    /**
+     * Collects the install map recursively.
+     *
+     * @param string $planetDotName
+     * @param array $installMap
+     */
+    private function collectInstallMap(string $planetDotName, array &$installMap)
+    {
+        $dependencies = $this->getLogicDependencies($planetDotName);
+        foreach ($dependencies as $dependencyDotName) {
+            $this->cyclicUtil->addDependency($planetDotName, $dependencyDotName);
+            if (false === $this->cyclicUtil->hasCyclicError()) {
+                $this->collectInstallMap($dependencyDotName, $installMap);
+            }
+        }
+
+        $installMap[] = $planetDotName;
+    }
+
+
+    /**
+     * Returns the dependencies for the given planet
+     * @param string $planetDotName
+     * @return array
+     */
+    private function getLogicDependencies(string $planetDotName): array
+    {
+        if (null === $this->dependencies) {
+            $this->dependencies = [];
+        }
+        if (false === array_key_exists($planetDotName, $this->dependencies)) {
+            $this->dependencies[$planetDotName] = [];
+            if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+                $this->dependencies[$planetDotName] = $installer->getDependencies();
+            }
+        }
+        return $this->dependencies[$planetDotName];
+    }
+
+
+    /**
+     * Returns the plugin installer interface instance for the given planetDotName if defined, or null otherwise.
+     *
+     *
+     * @param string $planetDotName
+     * @return PluginInstallerInterface|null
+     */
+    private function getInstallerInstance(string $planetDotName): ?PluginInstallerInterface
+    {
+        if (false === array_key_exists($planetDotName, $this->installers)) {
+            list($galaxy, $planet) = PlanetTool::extractPlanetDotName($planetDotName);
+
+            $compressed = PlanetTool::getCompressedPlanetName($planet);
+            $installerClass = "$galaxy\\$planet\\Light_PluginInstaller\\${compressed}PluginInstaller";
+            if (true === ClassTool::isLoaded($installerClass)) {
+                $instance = new $installerClass;
+                if ($instance instanceof LightServiceContainerAwareInterface) {
+                    $instance->setContainer($this->container);
+                }
+                $this->installers[$planetDotName] = $instance;
+            } else {
+                $this->installers[$planetDotName] = null;
+            }
+        }
+        return $this->installers[$planetDotName];
+    }
+
+
+    /**
+     * Parses all the planets in the current application, and fills the dependency cache (i.e. dependencies property of this class).
+     */
+    private function initAllDependencies()
+    {
+        if (null === $this->dependencies) {
+            $planetDotNames = $this->getAllPlanetDotNames();
+            foreach ($planetDotNames as $dotName) {
+                $this->getLogicDependencies($dotName); // this method fills the cache for us...
+            }
+        }
+    }
+
+
+    /**
+     * Returns an array of all planetDotNames found in the current application.
+     *
+     * @return array
+     */
+    private function getAllPlanetDotNames(): array
+    {
+        if (null === $this->allPlanetDotNames) {
+            $this->allPlanetDotNames = [];
+            $uniDir = $this->container->getApplicationDir() . "/universe";
+            if (is_dir($uniDir)) {
+                $planetDirs = PlanetTool::getPlanetDirs($uniDir);
+                foreach ($planetDirs as $planetDir) {
+                    list($galaxy, $planet) = PlanetTool::getGalaxyNamePlanetNameByDir($planetDir);
+                    $dotName = $galaxy . "." . $planet;
+                    $this->allPlanetDotNames[] = $dotName;
+                }
+            }
+        }
+        return $this->allPlanetDotNames;
+    }
+
+    /**
+     * Writes a message to the appropriate output.
+     * Depending of the message type, the message could be logged as well.
+     *
+     *
+     * @param string $msg
+     * @param string|null $type
+     */
+    private function message(string $msg, string $type = null)
+    {
+        $format = null;
+
+        if (null === $type) {
+            $type = 'info';
+        }
+        if ('debug' === $type) {
+            $format = 'darkGray';
+        }
+
+        if ('warning' === $type) {
+            $format = 'warning';
+        }
+
+
+        $tagOpen = null;
+        $tagClose = null;
+        if (null !== $format) {
+            $tagOpen = "<$format>";
+            $tagClose = "</$format>";
+        }
+
+
+        // print
+        if (true === in_array($type, $this->outputLevels)) {
+            if ('browser' === $this->outputMode) {
+                echo $this->getFormatter()->format($tagOpen . $msg . $tagClose);
+            } else {
+                $this->error("Unknown output mode type: " . $this->outputMode);
+            }
+        }
+    }
+
+    /**
+     * Returns the bashtml formatter instance.
+     *
+     * @return BashtmlFormatter
+     */
+    private function getFormatter(): BashtmlFormatter
+    {
+        if (null === $this->outputFormatter) {
+            $this->outputFormatter = new BashtmlFormatter();
+            if ('browser' === $this->outputMode) {
+                $this->outputFormatter->setFormatMode('web');
+            }
+        }
+        return $this->outputFormatter;
     }
 
 
@@ -746,5 +728,7 @@ class LightPluginInstallerService
     private function error(string $msg)
     {
         throw new LightPluginInstallerException($msg);
+
+
     }
 }

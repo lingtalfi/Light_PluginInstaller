@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2020-07-31
+2020-02-07 -> 2021-01-25
 
 
 
@@ -52,44 +52,30 @@ Here is an example of the service configuration:
 
 ```yaml
 plugin_installer:
-    instance: Ling\Light_PluginInstaller\Service\LightPluginInstallerService
-    methods:
-        setContainer:
-            container: @container()
-        setRootDir:
-            dir: ${app_dir}/config/data/Light_PluginInstaller
-        setOptions:
-            options:
-                useDebug: false      # default is false
-                useCache: true     # default is true
+  instance: Ling\Light_PluginInstaller\Service\LightPluginInstallerService
+  methods:
+    setContainer:
+      container: @container()
+    setOptions:
+      options:
+        useDebug: false      # default is false
+        useCache: true     # default is true
 
 
 # --------------------------------------
 # hooks
 # --------------------------------------
-$events.methods_collection:
-    -
-        method: registerListener
-        args:
-            events: Light.initialize_1
-            listener:
-                instance: @service(plugin_installer)
-                callable_method: onInitialize
-
-
-
 $logger.methods_collection:
-    -
-        method: addListener
-        args:
-            channels: plugin_installer.debug
-            listener:
-                instance: Ling\Light_Logger\Listener\LightCleanableFileLoggerListener
-                methods:
-                    configure:
-                        options:
-                            file: ${app_dir}/log/plugin_installer_debug.txt
-
+  -
+    method: addListener
+    args:
+      channels: plugin_installer.debug
+      listener:
+        instance: Ling\Light_Logger\Listener\LightCleanableFileLoggerListener
+        methods:
+          configure:
+            options:
+              file: ${app_dir}/log/plugin_installer_debug.txt
 
 ```
 
@@ -100,6 +86,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.0 -- 2021-01-25
+
+    - refactored whole api
+  
 - 1.8.2 -- 2020-12-08
 
     - Fix lpi-deps not using natsort.

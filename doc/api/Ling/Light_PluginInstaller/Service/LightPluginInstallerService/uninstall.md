@@ -7,7 +7,7 @@ LightPluginInstallerService::uninstall
 
 
 
-LightPluginInstallerService::uninstall — Uninstalls a registered plugin by its name.
+LightPluginInstallerService::uninstall — Uninstalls the plugin which planetDotName is given.
 
 
 
@@ -16,18 +16,12 @@ Description
 ================
 
 
-public [LightPluginInstallerService::uninstall](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService/uninstall.md)(string $name, ?array $options = []) : void
+public [LightPluginInstallerService::uninstall](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService/uninstall.md)(string $planetDotName) : void
 
 
 
 
-Uninstalls a registered plugin by its name.
-
-Available options are:
-- parentName: string, in the debug log, will help to indicate the relationship between the parent/child plugins.
-         You probably never need this, it's used for internal purposes.
-- indent: int=0. An internal option that I use to enhance the display of the debug (i.e. you probably should't mess with this).
-         It's the number of indent chars to prefix the log message with.
+Uninstalls the plugin which planetDotName is given.
 
 
 
@@ -36,11 +30,7 @@ Parameters
 ================
 
 
-- name
-
-    
-
-- options
+- planetDotName
 
     
 
@@ -64,7 +54,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::uninstall](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L376-L444)
+See the source code for method [LightPluginInstallerService::uninstall](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L252-L278)
 
 
 See Also
