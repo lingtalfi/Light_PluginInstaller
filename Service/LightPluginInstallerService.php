@@ -6,6 +6,7 @@ namespace Ling\Light_PluginInstaller\Service;
 use Ling\ArrayToString\ArrayToStringTool;
 use Ling\Bat\ClassTool;
 use Ling\CliTools\Formatter\BashtmlFormatter;
+use Ling\CliTools\Output\OutputInterface;
 use Ling\CyclicChainDetector\CyclicChainDetectorUtil;
 use Ling\CyclicChainDetector\Helper\CyclicChainDetectorHelper;
 use Ling\CyclicChainDetector\Link;
@@ -21,6 +22,8 @@ use Ling\UniverseTools\PlanetTool;
 
 /**
  * The LightPluginInstallerService class.
+ *
+ *
  */
 class LightPluginInstallerService
 {
@@ -47,7 +50,10 @@ class LightPluginInstallerService
     protected $outputMode;
 
     /**
+     *
      * The array of output levels to display.
+     * We support @page(classic log levels).
+     *
      * The available output levels are:
      *
      * - debug
@@ -140,6 +146,14 @@ class LightPluginInstallerService
      */
     private $allPlanetDotNames;
 
+    /**
+     * The output to use.
+     * If null, "echo" statements will be used instead.
+     *
+     * @var OutputInterface
+     */
+    private $output;
+
 
     /**
      * Builds the LightPluginInstallerService instance.
@@ -160,6 +174,7 @@ class LightPluginInstallerService
         $this->dependencies = null;
         $this->installers = [];
         $this->allPlanetDotNames = null;
+        $this->output = null;
     }
 
     /**
@@ -191,6 +206,17 @@ class LightPluginInstallerService
     public function setOutputLevels(array $outputLevels)
     {
         $this->outputLevels = $outputLevels;
+    }
+
+
+    /**
+     * Sets the output.
+     * @param OutputInterface $output
+     */
+    public function setOutput(OutputInterface $output)
+    {
+        $this->outputMode = "cli";
+        $this->output = $output;
     }
 
 
@@ -705,8 +731,12 @@ class LightPluginInstallerService
 
         // print
         if (true === in_array($type, $this->outputLevels)) {
-            if ('browser' === $this->outputMode) {
-                echo $this->getFormatter()->format($tagOpen . $msg . $tagClose);
+
+            $msg = $tagOpen . $msg . $tagClose;
+            if (null !== $this->output) {
+                $this->output->write($msg);
+            } elseif ('browser' === $this->outputMode) {
+                echo $this->getFormatter()->format($msg);
             } else {
                 $this->error("Unknown output mode type: " . $this->outputMode);
             }

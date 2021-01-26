@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.2 -- 2021-01-26
+
+    - add service->setOutput method
+  
 - 2.0.1 -- 2021-01-26
 
     - add service->isInstallable method
