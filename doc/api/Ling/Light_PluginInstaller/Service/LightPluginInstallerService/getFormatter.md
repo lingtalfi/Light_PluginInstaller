@@ -46,7 +46,7 @@ Returns [BashtmlFormatter](https://github.com/lingtalfi/CliTools/blob/master/doc
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getFormatter](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L711-L720)
+See the source code for method [LightPluginInstallerService::getFormatter](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L721-L730)
 
 
 See Also

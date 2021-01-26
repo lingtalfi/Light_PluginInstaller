@@ -279,6 +279,16 @@ class LightPluginInstallerService
 
 
     /**
+     * Returns whether the given planet is [installable](https://github.com/lingtalfi/TheBar/blob/master/discussions/import-install.md#summary).
+     * @param string $planetDotName
+     * @return bool
+     */
+    public function isInstallable(string $planetDotName): bool
+    {
+        return (null !== $this->getInstallerInstance($planetDotName));
+    }
+
+    /**
      * Returns whether the given plugin is installed.
      *
      * @param string $planetDotName
