@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2021-01-26
+2020-02-07 -> 2021-01-28
 
 A plugin installer service for [Light](https://github.com/lingtalfi/Light) applications.
 
@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.3 -- 2021-01-28
+
+    - fix various bugs
+  
 - 2.0.2 -- 2021-01-26
 
     - add service->setOutput method

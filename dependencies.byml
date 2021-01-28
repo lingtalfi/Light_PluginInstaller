@@ -1,11 +1,10 @@
 dependencies: 
     Ling: 
         - Light
-        - Light_Database
         - Light_DbSynchronizer
-        - Light_UserDatabase
         - UniverseTools
-        - ArrayToString
+        - Light_Database
+        - Light_UserDatabase
         - Bat
         - CliTools
         - CyclicChainDetector

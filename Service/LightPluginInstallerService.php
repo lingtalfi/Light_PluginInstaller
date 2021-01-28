@@ -3,7 +3,6 @@
 
 namespace Ling\Light_PluginInstaller\Service;
 
-use Ling\ArrayToString\ArrayToStringTool;
 use Ling\Bat\ClassTool;
 use Ling\CliTools\Formatter\BashtmlFormatter;
 use Ling\CliTools\Output\OutputInterface;
@@ -13,7 +12,6 @@ use Ling\CyclicChainDetector\Link;
 use Ling\Light\ServiceContainer\LightServiceContainerAwareInterface;
 use Ling\Light\ServiceContainer\LightServiceContainerInterface;
 use Ling\Light_Database\Service\LightDatabaseService;
-use Ling\Light_DbSynchronizer\Service\LightDbSynchronizerService;
 use Ling\Light_PluginInstaller\Exception\LightPluginInstallerException;
 use Ling\Light_PluginInstaller\PluginInstaller\PluginInstallerInterface;
 use Ling\SimplePdoWrapper\SimplePdoWrapper;
@@ -252,9 +250,11 @@ class LightPluginInstallerService
         $this->message("...$nbPlanets planet(s) to <b>logic install</b>." . PHP_EOL, "debug");
 
         $current = 1;
+
+
         foreach ($installMap as $_planetDotName) {
             $this->message("$planetDotName ($current/$nbPlanets): -> logic installing $_planetDotName." . PHP_EOL, "debug");
-            if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+            if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
                 if (true === $force || false === $installer->isInstalled()) {
                     $installer->install();
                     $this->message("$_planetDotName: was logic installed.", "debug");
@@ -291,9 +291,11 @@ class LightPluginInstallerService
 
 
         $current = 1;
+
+
         foreach ($uninstallMap as $_planetDotName) {
             $this->message("$planetDotName ($current/$nbPlanets): -> logic uninstalling $_planetDotName." . PHP_EOL, "debug");
-            if (null !== ($installer = $this->getInstallerInstance($planetDotName))) {
+            if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
                 $installer->uninstall();
                 $this->message("$_planetDotName: was logic uninstalled.", "debug");
 
@@ -385,6 +387,33 @@ class LightPluginInstallerService
         $this->message($msg, $type);
     }
 
+
+    /**
+     * Returns the plugin installer interface instance for the given planetDotName if defined, or null otherwise.
+     *
+     *
+     * @param string $planetDotName
+     * @return PluginInstallerInterface|null
+     */
+    public function getInstallerInstance(string $planetDotName): ?PluginInstallerInterface
+    {
+        if (false === array_key_exists($planetDotName, $this->installers)) {
+            list($galaxy, $planet) = PlanetTool::extractPlanetDotName($planetDotName);
+
+            $compressed = PlanetTool::getCompressedPlanetName($planet);
+            $installerClass = "$galaxy\\$planet\\Light_PluginInstaller\\${compressed}PluginInstaller";
+            if (true === ClassTool::isLoaded($installerClass)) {
+                $instance = new $installerClass;
+                if ($instance instanceof LightServiceContainerAwareInterface) {
+                    $instance->setContainer($this->container);
+                }
+                $this->installers[$planetDotName] = $instance;
+            } else {
+                $this->installers[$planetDotName] = null;
+            }
+        }
+        return $this->installers[$planetDotName];
+    }
 
 
 
@@ -479,52 +508,6 @@ class LightPluginInstallerService
         }
         return false;
     }
-
-
-    /**
-     * Tries to synchronize the database with the given @page(create file).
-     * If it fails, throws an exception detailing the errors.
-     *
-     * We use the Light_DbSynchronizer plugin under the hood (Light_DbSynchronizer->synchronize).
-     *
-     * $syncOptions are directly passed to the synchronize method.
-     *
-     *
-     * Available options are:
-     *
-     * - errorLevel: debug|error = debug
-     * - planetDotName: string, the planet dot name to use in case of an error message
-     *
-     *
-     * @param string $createFile
-     * @param array $syncOptions
-     * @param array $options
-     * @throws \Exception
-     */
-    public function synchronizeByCreateFile(string $createFile, array $syncOptions = [], array $options = [])
-    {
-
-        /**
-         * @var $synchronizer LightDbSynchronizerService
-         */
-        $synchronizer = $this->container->get("db_synchronizer");
-        $isSuccess = $synchronizer->synchronize($createFile, $syncOptions);
-        if (false === $isSuccess) {
-            $errorLevel = $options['errorLevel'] ?? 'debug';
-            $planetDotName = $options['planetDotName'] ?? $createFile;
-
-            if ("error" === $errorLevel) {
-                $errors = $synchronizer->getLogErrorMessages();
-            } else {
-                $errors = $synchronizer->getLogDebugMessages();
-            }
-
-
-            $sErrors = $planetDotName . ": The following errors occurred while trying to synchronize the database with our create file:" . PHP_EOL . ArrayToStringTool::toPhpArray($errors);
-            throw new LightPluginInstallerException($sErrors);
-        }
-    }
-
 
 
 
@@ -630,34 +613,6 @@ class LightPluginInstallerService
             }
         }
         return $this->dependencies[$planetDotName];
-    }
-
-
-    /**
-     * Returns the plugin installer interface instance for the given planetDotName if defined, or null otherwise.
-     *
-     *
-     * @param string $planetDotName
-     * @return PluginInstallerInterface|null
-     */
-    private function getInstallerInstance(string $planetDotName): ?PluginInstallerInterface
-    {
-        if (false === array_key_exists($planetDotName, $this->installers)) {
-            list($galaxy, $planet) = PlanetTool::extractPlanetDotName($planetDotName);
-
-            $compressed = PlanetTool::getCompressedPlanetName($planet);
-            $installerClass = "$galaxy\\$planet\\Light_PluginInstaller\\${compressed}PluginInstaller";
-            if (true === ClassTool::isLoaded($installerClass)) {
-                $instance = new $installerClass;
-                if ($instance instanceof LightServiceContainerAwareInterface) {
-                    $instance->setContainer($this->container);
-                }
-                $this->installers[$planetDotName] = $instance;
-            } else {
-                $this->installers[$planetDotName] = null;
-            }
-        }
-        return $this->installers[$planetDotName];
     }
 
 

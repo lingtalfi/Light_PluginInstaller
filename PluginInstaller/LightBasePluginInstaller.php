@@ -9,8 +9,8 @@ use Ling\Light\ServiceContainer\LightServiceContainerInterface;
 use Ling\Light_Database\Service\LightDatabaseService;
 use Ling\Light_DbSynchronizer\Helper\LightDbSynchronizerHelper;
 use Ling\Light_PluginInstaller\Service\LightPluginInstallerService;
+use Ling\Light_PluginInstaller\TableScope\TableScopeAwareInterface;
 use Ling\Light_UserDatabase\Service\LightUserDatabaseService;
-use Ling\UniverseTools\PlanetTool;
 
 /**
  * The LightBasePluginInstaller class.
@@ -51,7 +51,7 @@ use Ling\UniverseTools\PlanetTool;
  *
  *
  */
-class LightBasePluginInstaller implements PluginInstallerInterface, LightServiceContainerAwareInterface
+abstract class LightBasePluginInstaller implements PluginInstallerInterface, LightServiceContainerAwareInterface, TableScopeAwareInterface
 {
 
     /**
@@ -161,44 +161,19 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
      */
     public function uninstall()
     {
-        list($galaxy, $planet) = $this->extractPlanetDotName();
 
 
         //--------------------------------------------
         // LIGHT STANDARD PERMISSIONS
         //--------------------------------------------
-        $this->debugMsg("Remove light standard permissions ($planet.admin, $planet.user) if any." . PHP_EOL);
-        if (true === $this->container->has("user_database")) {
-
-            /**
-             * @var $userDb LightUserDatabaseService
-             */
-            $userDb = $this->container->get('user_database');
-            $userDb->getFactory()->getPermissionApi()->deletePermissionByNames([
-                $planet . ".admin",
-                $planet . ".user",
-            ]);
-        }
+        $this->removeLightStandardPermissions();
 
 
         //--------------------------------------------
         // REMOVE SCOPE TABLES
         //--------------------------------------------
         $tables = $this->getTableScope();
-        if ($tables) {
-            /**
-             * @var $userDb LightDatabaseService
-             */
-            $db = $this->container->get('database');
-            foreach ($tables as $table) {
-                $this->debugMsg("Remove table $table." . PHP_EOL);
-                try {
-                    $db->executeStatement("drop table `$table`");
-                } catch (\Exception $e) {
-                    $this->warningMsg($e);
-                }
-            }
-        }
+        $this->dropTables($tables);
 
 
     }
@@ -210,6 +185,9 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
     {
         return [];
     }
+
+
+
 
 
     //--------------------------------------------
@@ -289,24 +267,9 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
 
 
     /**
-     * Returns the [table scope](https://github.com/lingtalfi/TheBar/blob/master/discussions/table-scope.md) for this plugin.
-     *
-     * @return array
-     * @overrideMe
-     */
-    protected function registerTableScope(): ?array
-    {
-
-    }
-
-
-    //--------------------------------------------
-    //
-    //--------------------------------------------
-    /**
      * Returns an array containing the galaxy name and the planet name of the current instance.
      */
-    private function extractPlanetDotName(): array
+    protected function extractPlanetDotName(): array
     {
         if (null === $this->dotNameArray) {
             $className = get_class($this);
@@ -320,21 +283,76 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
 
 
     /**
-     * Returns the [table scope](https://github.com/lingtalfi/TheBar/blob/master/discussions/table-scope.md) for this plugin.
      *
-     * @return array
+     * Removes the @page(light standard permissions) for this plugin.
+     *
+     * @throws \Exception
      */
-    private function getTableScope(): array
+    protected function removeLightStandardPermissions()
     {
-        $scope = $this->registerTableScope();
-        if (null === $scope) {
-            list($galaxy, $planet) = $this->extractPlanetDotName();
-            $planetDotName = $galaxy . "." . $planet;
-            $createFile = $this->container->getApplicationDir() . "/universe/" . PlanetTool::getPlanetSlashNameByDotName($planetDotName) . "/assets/fixtures/create-structure.sql";
-            $scope = LightDbSynchronizerHelper::guessScopeByCreateFile($createFile, $this->container);
+        /**
+         * @var $userDb LightDatabaseService
+         */
+        $db = $this->container->get('database');
+        $util = $db->getMysqlInfoUtil();
+
+
+        list($galaxy, $planet) = $this->extractPlanetDotName();
+        $this->debugMsg("Remove light standard permissions ($planet.admin, $planet.user) if any." . PHP_EOL);
+        if (true === $this->container->has("user_database")) {
+
+
+            if (true === $util->hasTable("lud_permission")) {
+
+                /**
+                 * @var $userDb LightUserDatabaseService
+                 */
+                $userDb = $this->container->get('user_database');
+                $userDb->getFactory()->getPermissionApi()->deletePermissionByNames([
+                    $planet . ".admin",
+                    $planet . ".user",
+                ]);
+            }
         }
-        return $scope;
     }
 
+    /**
+     * Drop the given tables, if they exist.
+     *
+     * @param array $tables
+     * @throws \Exception
+     */
+    protected function dropTables(array $tables)
+    {
+        /**
+         * @var $userDb LightDatabaseService
+         */
+        $db = $this->container->get('database');
+        foreach ($tables as $table) {
+            $this->debugMsg("Remove table $table." . PHP_EOL);
+            try {
+                $db->executeStatement("drop table if exists `$table`");
+            } catch (\Exception $e) {
+                $this->warningMsg($e);
+            }
+        }
+
+    }
+
+
+    /**
+     * Returns whether the given table exists in the database.
+     *
+     * @param string $table
+     * @return bool
+     */
+    protected function hasTable(string $table): bool
+    {
+        /**
+         * @var $userDb LightDatabaseService
+         */
+        $db = $this->container->get('database');
+        return $db->getMysqlInfoUtil()->hasTable($table);
+    }
 
 }
