@@ -257,12 +257,12 @@ class LightPluginInstallerService
             if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
                 if (true === $force || false === $installer->isInstalled()) {
                     $installer->install();
-                    $this->message("$_planetDotName: was logic installed.", "debug");
+                    $this->message("$_planetDotName: was logic installed." . PHP_EOL, "debug");
                 } else {
-                    $this->message("$_planetDotName: was already logic installed, skipping.", "debug");
+                    $this->message("$_planetDotName: was already logic installed, skipping." . PHP_EOL, "debug");
                 }
             } else {
-                $this->message("$_planetDotName: no installer, skip.", "debug");
+                $this->message("$_planetDotName: no installer, skip." . PHP_EOL, "debug");
             }
         }
     }
@@ -297,10 +297,10 @@ class LightPluginInstallerService
             $this->message("$planetDotName ($current/$nbPlanets): -> logic uninstalling $_planetDotName." . PHP_EOL, "debug");
             if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
                 $installer->uninstall();
-                $this->message("$_planetDotName: was logic uninstalled.", "debug");
+                $this->message("$_planetDotName: was logic uninstalled.". PHP_EOL, "debug");
 
             } else {
-                $this->message("$_planetDotName: no installer, skip.", "debug");
+                $this->message("$_planetDotName: no installer, skip.". PHP_EOL, "debug");
             }
         }
     }

@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.4 -- 2021-01-28
+
+    - fix some service messages not having carriage return
+
 - 2.0.3 -- 2021-01-28
 
     - fix various bugs
