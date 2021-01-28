@@ -54,7 +54,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightBasePluginInstaller::warningMsg](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/PluginInstaller/LightBasePluginInstaller.php#L224-L227)
+See the source code for method [LightBasePluginInstaller::warningMsg](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/PluginInstaller/LightBasePluginInstaller.php#L235-L238)
 
 
 See Also

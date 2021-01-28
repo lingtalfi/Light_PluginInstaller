@@ -51,7 +51,7 @@ use Ling\Light_UserDatabase\Service\LightUserDatabaseService;
  *
  *
  */
-abstract class LightBasePluginInstaller implements PluginInstallerInterface, LightServiceContainerAwareInterface, TableScopeAwareInterface
+class LightBasePluginInstaller implements PluginInstallerInterface, LightServiceContainerAwareInterface, TableScopeAwareInterface
 {
 
     /**
@@ -185,6 +185,17 @@ abstract class LightBasePluginInstaller implements PluginInstallerInterface, Lig
     {
         return [];
     }
+
+
+    /**
+     * @implementation
+     */
+    public function getTableScope(): array
+    {
+        return [];
+    }
+
+
 
 
 
