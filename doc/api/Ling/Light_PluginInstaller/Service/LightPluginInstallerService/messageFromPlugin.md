@@ -58,7 +58,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::messageFromPlugin](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L384-L388)
+See the source code for method [LightPluginInstallerService::messageFromPlugin](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L386-L390)
 
 
 See Also

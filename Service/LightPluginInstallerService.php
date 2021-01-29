@@ -264,6 +264,7 @@ class LightPluginInstallerService
             } else {
                 $this->message("$_planetDotName: no installer, skip." . PHP_EOL, "debug");
             }
+            $current++;
         }
     }
 
@@ -302,6 +303,7 @@ class LightPluginInstallerService
             } else {
                 $this->message("$_planetDotName: no installer, skip.". PHP_EOL, "debug");
             }
+            $current++;
         }
     }
 

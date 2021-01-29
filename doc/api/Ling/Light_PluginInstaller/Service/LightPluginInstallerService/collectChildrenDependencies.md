@@ -55,7 +55,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::collectChildrenDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L551-L559)
+See the source code for method [LightPluginInstallerService::collectChildrenDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L553-L561)
 
 
 See Also

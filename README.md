@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2021-01-28
+2020-02-07 -> 2021-01-29
 
 A plugin installer service for [Light](https://github.com/lingtalfi/Light) applications.
 
@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.6 -- 2021-01-29
+
+    - fix service's install and uninstall method counter increment not incrementing 
+  
 - 2.0.5 -- 2021-01-28
 
     - update LightBasePluginInstaller, add getTableScope default implementation
