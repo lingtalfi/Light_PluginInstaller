@@ -74,6 +74,11 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.7 -- 2021-01-29
+
+    - redesign output display of install/uninstall methods 
+    - update LightBasePluginInstaller, add default Ling.Light_UserDatabase dependency  
+  
 - 2.0.6 -- 2021-01-29
 
     - fix service's install and uninstall method counter increment not incrementing 

@@ -49,7 +49,7 @@ Returns [PluginInstallerInterface](https://github.com/lingtalfi/Light_PluginInst
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getInstallerInstance](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L400-L418)
+See the source code for method [LightPluginInstallerService::getInstallerInstance](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L406-L424)
 
 
 See Also

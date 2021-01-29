@@ -247,22 +247,22 @@ class LightPluginInstallerService
         $this->message("Creating install map for $planetDotName...", "debug");
         $installMap = $this->getInstallMap($planetDotName);
         $nbPlanets = count($installMap);
-        $this->message("...$nbPlanets planet(s) to <b>logic install</b>." . PHP_EOL, "debug");
+        $this->message("...$nbPlanets planet(s) found</b>." . PHP_EOL, "debug");
 
         $current = 1;
 
 
         foreach ($installMap as $_planetDotName) {
-            $this->message("$planetDotName ($current/$nbPlanets): -> logic installing $_planetDotName." . PHP_EOL, "debug");
+            $this->message("$_planetDotName ($current/$nbPlanets) -> ", "debug");
             if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
                 if (true === $force || false === $installer->isInstalled()) {
+                    $this->message("executing logic install" . PHP_EOL, "debug");
                     $installer->install();
-                    $this->message("$_planetDotName: was logic installed." . PHP_EOL, "debug");
                 } else {
-                    $this->message("$_planetDotName: was already logic installed, skipping." . PHP_EOL, "debug");
+                    $this->message("was already logic installed, skipping." . PHP_EOL, "debug");
                 }
             } else {
-                $this->message("$_planetDotName: no installer, skip." . PHP_EOL, "debug");
+                $this->message("no installer, skipping." . PHP_EOL, "debug");
             }
             $current++;
         }
@@ -288,20 +288,26 @@ class LightPluginInstallerService
         $this->message("Creating uninstall map for $planetDotName...", "debug");
         $uninstallMap = $this->getUninstallMap($planetDotName);
         $nbPlanets = count($uninstallMap);
-        $this->message("...$nbPlanets planet(s) to <b>logic uninstall</b>." . PHP_EOL, "debug");
+        $this->message("...$nbPlanets planet(s) found." . PHP_EOL, "debug");
 
 
         $current = 1;
 
 
         foreach ($uninstallMap as $_planetDotName) {
-            $this->message("$planetDotName ($current/$nbPlanets): -> logic uninstalling $_planetDotName." . PHP_EOL, "debug");
+
+            $this->message("$_planetDotName ($current/$nbPlanets) -> ", "debug");
+
             if (null !== ($installer = $this->getInstallerInstance($_planetDotName))) {
-                $installer->uninstall();
-                $this->message("$_planetDotName: was logic uninstalled.". PHP_EOL, "debug");
+                if (true === $installer->isInstalled()) {
+                    $this->message("executing logic uninstall" . PHP_EOL, "debug");
+                    $installer->uninstall();
+                } else {
+                    $this->message("is not installed, skipping." . PHP_EOL, "debug");
+                }
 
             } else {
-                $this->message("$_planetDotName: no installer, skip.". PHP_EOL, "debug");
+                $this->message("no installer, skipping." . PHP_EOL, "debug");
             }
             $current++;
         }

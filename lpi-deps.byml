@@ -183,3 +183,14 @@
     - Ling:CliTools:1.10.19+
     - Ling:CyclicChainDetector:1.1.1+
     - Ling:SimplePdoWrapper:1.30.16+
+
+2.0.7: 
+    - Ling:Light:0.69.18+
+    - Ling:Light_DbSynchronizer:1.2.6+
+    - Ling:UniverseTools:1.22.9+
+    - Ling:Light_Database:1.14.11+
+    - Ling:Light_UserDatabase:1.31.7+
+    - Ling:Bat:1.302+
+    - Ling:CliTools:1.10.19+
+    - Ling:CyclicChainDetector:1.1.1+
+    - Ling:SimplePdoWrapper:1.30.16+

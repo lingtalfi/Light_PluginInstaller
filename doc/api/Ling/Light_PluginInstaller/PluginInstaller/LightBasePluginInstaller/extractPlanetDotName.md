@@ -46,7 +46,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightBasePluginInstaller::extractPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/PluginInstaller/LightBasePluginInstaller.php#L283-L293)
+See the source code for method [LightBasePluginInstaller::extractPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/PluginInstaller/LightBasePluginInstaller.php#L287-L297)
 
 
 See Also

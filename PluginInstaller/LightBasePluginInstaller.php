@@ -143,14 +143,16 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
         // LIGHT STANDARD PERMISSIONS
         //--------------------------------------------
         if (true === $this->container->has("user_database")) {
-            list($galaxy, $planet) = $this->extractPlanetDotName();
-            $permissionName = $planet . ".admin";
-            /**
-             * @var $userDb LightUserDatabaseService
-             */
-            $userDb = $this->container->get('user_database');
-            if (null !== $userDb->getFactory()->getPermissionApi()->getPermissionIdByName($permissionName)) {
-                return true;
+            if (true === $this->hasTable("lud_permission")) {
+                list($galaxy, $planet) = $this->extractPlanetDotName();
+                $permissionName = $planet . ".admin";
+                /**
+                 * @var $userDb LightUserDatabaseService
+                 */
+                $userDb = $this->container->get('user_database');
+                if (null !== $userDb->getFactory()->getPermissionApi()->getPermissionIdByName($permissionName)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -183,7 +185,9 @@ class LightBasePluginInstaller implements PluginInstallerInterface, LightService
      */
     public function getDependencies(): array
     {
-        return [];
+        return [
+            'Ling.Light_UserDatabase',
+        ];
     }
 
 
