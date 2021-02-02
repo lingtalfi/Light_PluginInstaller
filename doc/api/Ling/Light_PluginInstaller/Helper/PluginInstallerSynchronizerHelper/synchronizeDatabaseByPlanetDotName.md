@@ -55,7 +55,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [PluginInstallerSynchronizerHelper::synchronizeDatabaseByPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Helper/PluginInstallerSynchronizerHelper.php#L28-L36)
+See the source code for method [PluginInstallerSynchronizerHelper::synchronizeDatabaseByPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Helper/PluginInstallerSynchronizerHelper.php#L29-L37)
 
 
 See Also

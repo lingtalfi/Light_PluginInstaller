@@ -46,7 +46,7 @@ Returns void.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::initAllDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L630-L638)
+See the source code for method [LightPluginInstallerService::initAllDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L640-L648)
 
 
 See Also

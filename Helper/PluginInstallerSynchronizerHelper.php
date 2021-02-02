@@ -22,6 +22,7 @@ class PluginInstallerSynchronizerHelper
      * It uses the Light_DbSynchronizer plugin under the hood.
      *
      *
+     * @param LightServiceContainerInterface $jo
      * @param string $planetDotName
      * @param LightServiceContainerInterface $container
      */

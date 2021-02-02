@@ -208,6 +208,17 @@ class LightPluginInstallerService
 
 
     /**
+     * Adds an output level.
+     *
+     * @param string $outputLevel
+     */
+    public function addOutputLevel(string $outputLevel)
+    {
+        $this->outputLevels[] = $outputLevel;
+    }
+
+
+    /**
      * Sets the output.
      * @param OutputInterface $output
      */
@@ -235,7 +246,7 @@ class LightPluginInstallerService
 
         $force = $options['force'] ?? false;
 
-        $this->message("Calling \"install\" method with $planetDotName." . PHP_EOL);
+        $this->message("Light_PluginInstaller: Calling \"install\" method with $planetDotName." . PHP_EOL);
 
         $this->cyclicUtil = new CyclicChainDetectorUtil();
         $this->cyclicUtil->setCallback(function (Link $link) {
@@ -278,7 +289,7 @@ class LightPluginInstallerService
      */
     public function uninstall(string $planetDotName)
     {
-        $this->message("Calling \"uninstall\" method with $planetDotName." . PHP_EOL);
+        $this->message("Light_PluginInstaller: Calling \"uninstall\" method with $planetDotName." . PHP_EOL);
 
 
         // init dependencies for every planet in the target application
@@ -292,7 +303,6 @@ class LightPluginInstallerService
 
 
         $current = 1;
-
 
         foreach ($uninstallMap as $_planetDotName) {
 
@@ -352,7 +362,7 @@ class LightPluginInstallerService
     public function installAll(array $options = [])
     {
         $force = $options['force'] ?? false;
-        $this->message("Calling \"installAll\" method." . PHP_EOL);
+        $this->message("Light_PluginInstaller: Calling \"installAll\" method." . PHP_EOL);
         $dotNames = $this->getAllPlanetDotNames();
         foreach ($dotNames as $dotName) {
             if (null !== ($installer = $this->getInstallerInstance($dotName))) {
@@ -372,7 +382,7 @@ class LightPluginInstallerService
      */
     public function uninstallAll()
     {
-        $this->message("Calling \"uninstallAll\" method." . PHP_EOL);
+        $this->message("Light_PluginInstaller: Calling \"uninstallAll\" method." . PHP_EOL);
         $dotNames = $this->getAllPlanetDotNames();
         foreach ($dotNames as $dotName) {
             if (null !== ($installer = $this->getInstallerInstance($dotName))) {

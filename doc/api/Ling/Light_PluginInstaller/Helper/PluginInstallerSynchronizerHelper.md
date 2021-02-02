@@ -4,7 +4,7 @@
 
 The PluginInstallerSynchronizerHelper class
 ================
-2020-02-07 --> 2021-01-29
+2020-02-07 --> 2021-02-02
 
 
 

@@ -51,7 +51,7 @@ Returns array.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getUninstallMap](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L540-L548)
+See the source code for method [LightPluginInstallerService::getUninstallMap](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L550-L558)
 
 
 See Also

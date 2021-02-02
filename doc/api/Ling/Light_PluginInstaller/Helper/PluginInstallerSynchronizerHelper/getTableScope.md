@@ -58,7 +58,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [PluginInstallerSynchronizerHelper::getTableScope](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Helper/PluginInstallerSynchronizerHelper.php#L50-L66)
+See the source code for method [PluginInstallerSynchronizerHelper::getTableScope](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Helper/PluginInstallerSynchronizerHelper.php#L51-L67)
 
 
 See Also
