@@ -6,7 +6,6 @@ dependencies:
         - Bat
         - CliTools
         - CyclicChainDetector
-        - Light_Database
         - SimplePdoWrapper
     
 

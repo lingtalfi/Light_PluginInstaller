@@ -11,10 +11,8 @@ use Ling\CyclicChainDetector\Helper\CyclicChainDetectorHelper;
 use Ling\CyclicChainDetector\Link;
 use Ling\Light\ServiceContainer\LightServiceContainerAwareInterface;
 use Ling\Light\ServiceContainer\LightServiceContainerInterface;
-use Ling\Light_Database\Service\LightDatabaseService;
 use Ling\Light_PluginInstaller\Exception\LightPluginInstallerException;
 use Ling\Light_PluginInstaller\PluginInstaller\PluginInstallerInterface;
-use Ling\SimplePdoWrapper\SimplePdoWrapper;
 use Ling\SimplePdoWrapper\Util\MysqlInfoUtil;
 use Ling\UniverseTools\PlanetTool;
 
@@ -296,7 +294,6 @@ class LightPluginInstallerService
         $this->initAllDependencies();
 
 
-
         $this->message("Creating uninstall map for $planetDotName...", "debug");
         $uninstallMap = $this->getUninstallMap($planetDotName);
         $nbPlanets = count($uninstallMap);
@@ -434,104 +431,6 @@ class LightPluginInstallerService
         }
         return $this->installers[$planetDotName];
     }
-
-
-
-
-
-
-    //--------------------------------------------
-    // HELPERS FOR THIRD PARTY PLUGINS
-    //--------------------------------------------
-    /**
-     * Returns whether the given table exists in the current database.
-     *
-     * @param string $table
-     * @return bool
-     * @throws \Exception
-     */
-    public function hasTable(string $table): bool
-    {
-        if (null === $this->mysqlInfoUtil) {
-
-            /**
-             * @var $db LightDatabaseService
-             */
-            $db = $this->container->get("database");
-            $util = $db->getMysqlInfoUtil();
-            $this->mysqlInfoUtil = $util;
-        }
-        return $this->mysqlInfoUtil->hasTable($table);
-    }
-
-    /**
-     * Returns whether the given table has an entry where the column is the given column with the value being the given value.
-     *
-     * Note: we trust the given parameters (i.e. we do not protect against sql injection), apart from the value argument,
-     * which is turned into a pdo marker.
-     *
-     * @param string $table
-     * @param string $column
-     * @param $value
-     * @return bool
-     * @throws \Exception
-     */
-    public function tableHasColumnValue(string $table, string $column, $value): bool
-    {
-        /**
-         * @var $db LightDatabaseService
-         */
-        $db = $this->container->get("database");
-        $res = $db->fetch("select count(*) as count from `$table` where `$column` = :value", [
-            ":value" => $value,
-        ]);
-        if (false !== $res) {
-            return ((int)$res['count'] > 0);
-        }
-        return false;
-    }
-
-
-    /**
-     * Returns the value of the given column in the given table, matching the given @page(where conditions).
-     * In case of no match, the method either returns false by default, or throws an exception if the throwEx flag is
-     * set to true.
-     *
-     *
-     *
-     *
-     * @param string $table
-     * @param string $column
-     * @param $where
-     * @param bool $throwEx = false
-     * @return string|false
-     * @throws \Exception
-     */
-    public function fetchRowColumn(string $table, string $column, $where, bool $throwEx = false)
-    {
-        /**
-         * @var $db LightDatabaseService
-         */
-        $db = $this->container->get("database");
-        $markers = [];
-        $q = "select `$column` from `$table`";
-
-        SimplePdoWrapper::addWhereSubStmt($q, $markers, $where);
-
-
-        $res = $db->fetch($q, $markers, \PDO::FETCH_COLUMN);
-        if (false !== $res) {
-            return $res;
-        }
-        if (true === $throwEx) {
-            throw new LightPluginInstallerException("Row column not found: $table.$column.");
-        }
-        return false;
-    }
-
-
-
-
 
 
 
