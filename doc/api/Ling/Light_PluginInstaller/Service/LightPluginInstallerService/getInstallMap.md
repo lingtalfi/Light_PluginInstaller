@@ -51,7 +51,7 @@ Returns array.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getInstallMap](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L588-L594)
+See the source code for method [LightPluginInstallerService::getInstallMap](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L590-L596)
 
 
 See Also

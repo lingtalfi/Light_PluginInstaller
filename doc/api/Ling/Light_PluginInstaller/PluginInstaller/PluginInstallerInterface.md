@@ -4,7 +4,7 @@
 
 The PluginInstallerInterface class
 ================
-2020-02-07 --> 2021-02-02
+2020-02-07 --> 2021-02-11
 
 
 
@@ -58,4 +58,4 @@ See the source code of [Ling\Light_PluginInstaller\PluginInstaller\PluginInstall
 
 SeeAlso
 ==============
-Previous class: [LightBasePluginInstaller](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller.md)<br>Next class: [LightPluginInstallerService](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService.md)<br>
+Previous class: [PluginInstallerSynchronizerHelper](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper.md)<br>Next class: [LightPluginInstallerService](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Service/LightPluginInstallerService.md)<br>

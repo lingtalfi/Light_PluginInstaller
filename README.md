@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2021-02-02
+2020-02-07 -> 2021-02-11
 
 A plugin installer service for [Light](https://github.com/lingtalfi/Light) applications.
 
@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.9 -- 2021-02-11
+
+    - remove LightBasePluginInstaller class (moved to Ling.Light_UserDatabase planet)  
+  
 - 2.0.8 -- 2021-02-02
 
     - add LightPluginInstallerService->addOutputLevel method  

@@ -3,11 +3,10 @@ dependencies:
         - Light
         - Light_DbSynchronizer
         - UniverseTools
-        - Light_Database
-        - Light_UserDatabase
         - Bat
         - CliTools
         - CyclicChainDetector
+        - Light_Database
         - SimplePdoWrapper
     
 

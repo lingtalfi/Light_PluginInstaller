@@ -296,6 +296,7 @@ class LightPluginInstallerService
         $this->initAllDependencies();
 
 
+
         $this->message("Creating uninstall map for $planetDotName...", "debug");
         $uninstallMap = $this->getUninstallMap($planetDotName);
         $nbPlanets = count($uninstallMap);
@@ -303,6 +304,7 @@ class LightPluginInstallerService
 
 
         $current = 1;
+
 
         foreach ($uninstallMap as $_planetDotName) {
 

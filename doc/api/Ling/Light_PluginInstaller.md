@@ -1,6 +1,6 @@
 Ling/Light_PluginInstaller
 ================
-2020-02-07 --> 2021-02-02
+2020-02-07 --> 2021-02-11
 
 
 
@@ -11,14 +11,6 @@ Table of contents
 - [LightPluginInstallerException](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Exception/LightPluginInstallerException.md) &ndash; The LightPluginInstallerException class.
 - [PluginInstallerSynchronizerHelper](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper.md) &ndash; The PluginInstallerSynchronizerHelper class.
     - [PluginInstallerSynchronizerHelper::synchronizeDatabaseByPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper/synchronizeDatabaseByPlanetDotName.md) &ndash; Synchronizes the plugin's table(s) in the database.
-- [LightBasePluginInstaller](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller.md) &ndash; The LightBasePluginInstaller class.
-    - [LightBasePluginInstaller::__construct](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/__construct.md) &ndash; Builds the LightBasePluginInstaller instance.
-    - [LightBasePluginInstaller::setContainer](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/setContainer.md) &ndash; Sets the container.
-    - [LightBasePluginInstaller::install](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/install.md) &ndash; Installs the plugin in the light application.
-    - [LightBasePluginInstaller::isInstalled](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/isInstalled.md) &ndash; Returns whether the core install phase of the plugin is fully completed.
-    - [LightBasePluginInstaller::uninstall](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/uninstall.md) &ndash; Uninstalls the plugin.
-    - [LightBasePluginInstaller::getDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/getDependencies.md) &ndash; Returns the array of dependencies.
-    - [LightBasePluginInstaller::getTableScope](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/LightBasePluginInstaller/getTableScope.md) &ndash; Returns the [table scope](https://github.com/lingtalfi/TheBar/blob/master/discussions/table-scope.md) for this planet.
 - [PluginInstallerInterface](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface.md) &ndash; The PluginInstallerInterface interface.
     - [PluginInstallerInterface::install](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface/install.md) &ndash; Installs the plugin in the light application.
     - [PluginInstallerInterface::isInstalled](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface/isInstalled.md) &ndash; Returns whether the core install phase of the plugin is fully completed.
@@ -51,11 +43,10 @@ Dependencies
 - [Light](https://github.com/lingtalfi/Light)
 - [Light_DbSynchronizer](https://github.com/lingtalfi/Light_DbSynchronizer)
 - [UniverseTools](https://github.com/lingtalfi/UniverseTools)
-- [Light_Database](https://github.com/lingtalfi/Light_Database)
-- [Light_UserDatabase](https://github.com/lingtalfi/Light_UserDatabase)
 - [Bat](https://github.com/lingtalfi/Bat)
 - [CliTools](https://github.com/lingtalfi/CliTools)
 - [CyclicChainDetector](https://github.com/lingtalfi/CyclicChainDetector)
+- [Light_Database](https://github.com/lingtalfi/Light_Database)
 - [SimplePdoWrapper](https://github.com/lingtalfi/SimplePdoWrapper)
 
 

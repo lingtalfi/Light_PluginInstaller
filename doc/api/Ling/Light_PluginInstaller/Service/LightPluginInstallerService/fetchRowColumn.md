@@ -68,7 +68,7 @@ Exceptions thrown
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L508-L528)
+See the source code for method [LightPluginInstallerService::fetchRowColumn](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L510-L530)
 
 
 See Also

@@ -49,7 +49,7 @@ Returns array.
 
 Source Code
 ===========
-See the source code for method [LightPluginInstallerService::getLogicDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L622-L634)
+See the source code for method [LightPluginInstallerService::getLogicDependencies](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/Service/LightPluginInstallerService.php#L624-L636)
 
 
 See Also
