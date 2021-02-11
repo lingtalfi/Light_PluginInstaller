@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.12 -- 2021-02-11
+
+    - fix lpi-deps.byml still having dependency to Light_DbSynchronizer   
+  
 - 2.0.11 -- 2021-02-11
 
     - remove dependency with Light_DbSynchronizer planet  
