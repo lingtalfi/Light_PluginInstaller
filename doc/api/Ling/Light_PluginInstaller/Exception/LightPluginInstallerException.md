@@ -54,4 +54,4 @@ See the source code of [Ling\Light_PluginInstaller\Exception\LightPluginInstalle
 
 SeeAlso
 ==============
-Next class: [PluginInstallerSynchronizerHelper](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper.md)<br>
+Next class: [PluginInstallerInterface](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface.md)<br>

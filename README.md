@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.11 -- 2021-02-11
+
+    - remove dependency with Light_DbSynchronizer planet  
+  
 - 2.0.10 -- 2021-02-11
 
     - remove dependency with Light_Database planet  

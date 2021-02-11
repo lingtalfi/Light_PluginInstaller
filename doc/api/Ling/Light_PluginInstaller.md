@@ -9,8 +9,6 @@ Table of contents
 ===========
 
 - [LightPluginInstallerException](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Exception/LightPluginInstallerException.md) &ndash; The LightPluginInstallerException class.
-- [PluginInstallerSynchronizerHelper](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper.md) &ndash; The PluginInstallerSynchronizerHelper class.
-    - [PluginInstallerSynchronizerHelper::synchronizeDatabaseByPlanetDotName](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/Helper/PluginInstallerSynchronizerHelper/synchronizeDatabaseByPlanetDotName.md) &ndash; Synchronizes the plugin's table(s) in the database.
 - [PluginInstallerInterface](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface.md) &ndash; The PluginInstallerInterface interface.
     - [PluginInstallerInterface::install](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface/install.md) &ndash; Installs the plugin in the light application.
     - [PluginInstallerInterface::isInstalled](https://github.com/lingtalfi/Light_PluginInstaller/blob/master/doc/api/Ling/Light_PluginInstaller/PluginInstaller/PluginInstallerInterface/isInstalled.md) &ndash; Returns whether the core install phase of the plugin is fully completed.
@@ -37,12 +35,11 @@ Table of contents
 
 Dependencies
 ============
-- [Light](https://github.com/lingtalfi/Light)
-- [Light_DbSynchronizer](https://github.com/lingtalfi/Light_DbSynchronizer)
-- [UniverseTools](https://github.com/lingtalfi/UniverseTools)
 - [Bat](https://github.com/lingtalfi/Bat)
 - [CliTools](https://github.com/lingtalfi/CliTools)
 - [CyclicChainDetector](https://github.com/lingtalfi/CyclicChainDetector)
+- [Light](https://github.com/lingtalfi/Light)
 - [SimplePdoWrapper](https://github.com/lingtalfi/SimplePdoWrapper)
+- [UniverseTools](https://github.com/lingtalfi/UniverseTools)
 
 
