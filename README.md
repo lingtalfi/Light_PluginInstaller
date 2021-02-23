@@ -74,11 +74,11 @@ $logger.methods_collection:
 History Log
 =============
 
-- 2.0.15 -- 2021-02-23
+- 2.0.16 -- 2021-02-23
 
     - Update dependencies (pushed by SubscribersUtil)
 
-- 2.0.14 -- 2021-02-23
+- 2.0.15 -- 2021-02-23
 
     - Update dependencies (pushed by SubscribersUtil)
 
