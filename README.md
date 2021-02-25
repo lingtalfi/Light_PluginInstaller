@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2021-02-11
+2020-02-07 -> 2021-02-25
 
 A plugin installer service for [Light](https://github.com/lingtalfi/Light) applications.
 
@@ -74,6 +74,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.17 -- 2021-02-25
+
+    - fix assets/map accidentally removed
+  
 - 2.0.16 -- 2021-02-23
 
     - Update dependencies (pushed by SubscribersUtil)
