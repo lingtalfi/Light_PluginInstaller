@@ -1,6 +1,6 @@
 Light_PluginInstaller
 ===========
-2020-02-07 -> 2021-02-25
+2020-02-07 -> 2021-03-05
 
 A plugin installer service for [Light](https://github.com/lingtalfi/Light) applications.
 
@@ -11,6 +11,11 @@ This is part of the [universe framework](https://github.com/karayabin/universe-s
 
 Install
 ==========
+Using the [planet installer](https://github.com/lingtalfi/Light_PlanetInstaller) via [light-cli](https://github.com/lingtalfi/Light_Cli)
+```bash
+lt install Ling.Light_PluginInstaller
+```
+
 Using the [uni](https://github.com/lingtalfi/universe-naive-importer) command.
 
 ```bash
@@ -73,6 +78,10 @@ $logger.methods_collection:
 
 History Log
 =============
+
+- 2.0.18 -- 2021-03-05
+
+    - update README.md, add install alternative
 
 - 2.0.17 -- 2021-02-25
 
