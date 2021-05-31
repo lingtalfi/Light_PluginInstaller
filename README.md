@@ -92,6 +92,10 @@ $logger.methods_collection:
 History Log
 =============
 
+- 2.0.22 -- 2021-05-31
+
+    - Removing trailing plus in lpi-deps file (to work with Light_PlanetInstaller:2.0.0 api
+
 - 2.0.21 -- 2021-05-31
 
     - add deprecation notice in the README.md
